@@ -1,0 +1,13 @@
+name,email
+User 01,user01@example.com
+User 02,user02@example.com
+User 03,invalid-email
+User 04,user04@example.com
+User 05,user05@example.com
+User 06,user06example.com
+User 07,user07@example.com
+User 08,user08@example.com
+User 09,
+User 10,user10@example.com
+User 11,user11@example.com
+User 12,invalid-email

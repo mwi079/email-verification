@@ -1,4 +1,12 @@
 {
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
   "dependencies": {
     "csv-parser": "^3.2.0",
     "express": "^5.2.1",
