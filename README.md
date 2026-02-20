@@ -33,13 +33,17 @@ Save the uploadId — you’ll need it to check status.
 Replace <uploadId> with the ID returned from the upload step:
 
 curl http://localhost:4000/status/<uploadId>
+
 ⏳ While Processing
+
 {
   "uploadId": "generated-uuid",
   "state": "processing",
   "progress": "60%"
 }
+
 ✅ When Processing Is Complete
+
 {
   "uploadId": "generated-uuid",
   "state": "done",
