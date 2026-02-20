@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
 import pLimit from "p-limit";
+import { randomUUID } from "node:crypto";
 import uploadLimiter from "../middleware/rateLimiter";
 import {
   createUpload,
@@ -25,14 +25,6 @@ router.post(
         return res.status(400).json({ error: "File is required" });
       }
 
-      const uploadId = uuidv4();
-      createUpload(uploadId);
-
-      res.json({
-        uploadId,
-        message: "File uploaded successfully. Processing started.",
-      });
-
       let rows: CsvRow[];
       try {
         rows = await parseCSV(req.file.buffer);
@@ -40,18 +32,27 @@ router.post(
         return res.status(400).json({ error: "Invalid or malformed CSV file" });
       }
 
+      const uploadId = randomUUID();
+      createUpload(uploadId);
+
+      res.json({
+        uploadId,
+        message: "File uploaded successfully. Processing started.",
+      });
+
       const limit = pLimit(5);
 
       updateUpload(uploadId, { totalRecords: rows.length });
 
       const failedDetails: FailedRecord[] = [];
 
+      let completed = 0;
+
       await Promise.all(
-        rows.map((row, index) =>
+        rows.map((row) =>
           limit(async () => {
             try {
               const result = await validateWithTimeout(row.email);
-
               if (!result.valid) {
                 failedDetails.push({
                   name: row.name,
@@ -59,15 +60,16 @@ router.post(
                   error: "Invalid email format",
                 });
               }
-
-              updateUpload(uploadId, {
-                progress: Math.round(((index + 1) / rows.length) * 100),
-              });
             } catch (err) {
               failedDetails.push({
                 name: row.name,
                 email: row.email,
                 error: (err as Error).message,
+              });
+            } finally {
+              completed += 1;
+              updateUpload(uploadId, {
+                progress: Math.round((completed / rows.length) * 100),
               });
             }
           })
