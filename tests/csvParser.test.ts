@@ -4,7 +4,7 @@ describe("parseCSV", () => {
   test("parses valid CSV into rows", async () => {
     const csv = Buffer.from(
       "name,email\nJohn Doe,john@example.com\nJane Smith,jane@example.com\n",
-      "utf-8"
+      "utf-8",
     );
 
     const rows = await parseCSV(csv);

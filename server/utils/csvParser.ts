@@ -1,4 +1,5 @@
 import csv from "csv-parser";
+import fs from "node:fs";
 import { Readable } from "node:stream";
 
 export interface CsvRow {
@@ -6,10 +7,14 @@ export interface CsvRow {
   email: string;
 }
 
-export default function parseCSV(buffer: Buffer): Promise<CsvRow[]> {
+export default function parseCSV(input: Buffer | string): Promise<CsvRow[]> {
   return new Promise((resolve, reject) => {
     const results: CsvRow[] = [];
-    const stream = Readable.from(buffer);
+
+    const stream =
+      typeof input === "string"
+        ? fs.createReadStream(input)
+        : Readable.from(input);
 
     stream
       .pipe(csv())

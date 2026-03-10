@@ -13,7 +13,7 @@ import parseCSV, { CsvRow } from "../utils/csvParser";
 import { validateWithTimeout } from "../services/emailValidator";
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ dest: "uploads/" }); //storage:multer.memoryStorage()
 
 router.post(
   "/upload",
@@ -27,7 +27,7 @@ router.post(
 
       let rows: CsvRow[];
       try {
-        rows = await parseCSV(req.file.buffer);
+        rows = await parseCSV(req.file.path); //req.file.buffer
       } catch {
         return res.status(400).json({ error: "Invalid or malformed CSV file" });
       }
@@ -72,8 +72,8 @@ router.post(
                 progress: Math.round((completed / rows.length) * 100),
               });
             }
-          })
-        )
+          }),
+        ),
       );
 
       updateUpload(uploadId, {
@@ -86,7 +86,7 @@ router.post(
     } catch (err) {
       next(err);
     }
-  }
+  },
 );
 
 router.get("/status/:uploadId", (req, res) => {

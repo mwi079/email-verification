@@ -6,7 +6,7 @@ interface ValidationResult {
 
 const mockValidateEmail = async (
   email: string,
-  delayMs = 100
+  delayMs = 100,
 ): Promise<ValidationResult> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -17,12 +17,12 @@ const mockValidateEmail = async (
 
 export async function validateWithTimeout(
   email: string,
-  timeoutMs = 1000
+  timeoutMs = 1000,
 ): Promise<ValidationResult> {
   const start = Date.now();
 
   const timeoutPromise = new Promise<ValidationResult>((_, reject) =>
-    setTimeout(() => reject(new Error("Validation timeout")), timeoutMs)
+    setTimeout(() => reject(new Error("Validation timeout")), timeoutMs),
   );
 
   try {
